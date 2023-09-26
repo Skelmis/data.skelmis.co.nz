@@ -10,6 +10,10 @@ from fastapi.responses import RedirectResponse
 from home.piccolo_app import APP_CONFIG
 
 app = FastAPI(
+    title="Ethan's data aggregation",
+    description="All the things I like to gather data on, simplified in one place.<br>"
+    "I don't propose making these public, however if you are interested in access to specific routes "
+    "feel free to drop me a message. Some of these are meant to be consumed after all.",
     routes=[
         Mount(
             "/admin/",
