@@ -1,10 +1,12 @@
 import os
 
+from dotenv import load_dotenv
 from piccolo.engine.postgres import PostgresEngine
 from piccolo.engine.sqlite import SQLiteEngine
 
 from piccolo.conf.apps import AppRegistry
 
+load_dotenv()
 
 if os.environ.get("PROD", None) is not None:
     DB = PostgresEngine(

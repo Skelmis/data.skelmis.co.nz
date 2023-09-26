@@ -3,7 +3,7 @@ version: "2.2"
 services:
   data_db:
     image: postgres:14.7
-    container_name: "bb.data.skelmis.co.nz"
+    container_name: "db.data.skelmis.co.nz"
     restart: always
     command: -p 2201
     ports:
