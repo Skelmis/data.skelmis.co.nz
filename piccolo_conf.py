@@ -14,8 +14,8 @@ if os.environ.get("PROD", None) is not None:
             "database": os.environ["POSTGRES_DB"],
             "user": os.environ["POSTGRES_USER"],
             "password": os.environ["POSTGRES_PASSWORD"],
-            "host": "localhost",
-            "port": 2201,
+            "host": os.environ["POSTGRES_HOST"],
+            "port": int(os.environ["POSTGRES_PORT"]),
         }
     )
 else:
