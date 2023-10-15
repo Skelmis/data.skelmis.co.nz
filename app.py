@@ -3,10 +3,11 @@ import typing as t
 from fastapi import FastAPI
 from piccolo_admin.endpoints import create_admin
 from piccolo.engine import engine_finder
-from starlette.routing import Mount
+from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 
+from home.endpoints import HomeEndpoint, TravelEndpoint
 from home.piccolo_app import APP_CONFIG
 
 app = FastAPI(
@@ -15,6 +16,8 @@ app = FastAPI(
     "I don't propose making these public, however if you are interested in access to specific routes "
     "feel free to drop me a message. Some of these are meant to be consumed after all.",
     routes=[
+        Route("/", HomeEndpoint),
+        Route("/travel", TravelEndpoint),
         Mount(
             "/admin/",
             create_admin(
@@ -26,11 +29,6 @@ app = FastAPI(
         Mount("/static/", StaticFiles(directory="static")),
     ],
 )
-
-
-@app.get("/")
-async def home():
-    return RedirectResponse("/redoc")
 
 
 @app.on_event("startup")
