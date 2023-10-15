@@ -1,6 +1,5 @@
 import os
 
-from fastapi import HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
