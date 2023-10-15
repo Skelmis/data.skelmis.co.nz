@@ -1,13 +1,10 @@
-import typing as t
-
 from fastapi import FastAPI
 from piccolo_admin.endpoints import create_admin
 from piccolo.engine import engine_finder
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
 
-from home.endpoints import HomeEndpoint, TravelEndpoint
+from home.endpoints import HomeEndpoint, TravelEndpoint, CameraEndpoint
 from home.piccolo_app import APP_CONFIG
 
 app = FastAPI(
@@ -18,6 +15,7 @@ app = FastAPI(
     routes=[
         Route("/", HomeEndpoint),
         Route("/travel", TravelEndpoint),
+        Route("/camera", CameraEndpoint),
         Mount(
             "/admin/",
             create_admin(

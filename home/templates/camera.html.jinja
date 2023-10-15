@@ -1,0 +1,27 @@
+{% extends "base.html.jinja" %}
+
+{% block content %}
+    <div class="hero">
+        <h1>{{ title }}</h1>
+    </div>
+    <div class="content">
+        <section>
+            <h2>Editing</h2>
+            <h3>Font</h3>
+            <ul><li>Balbes</li></ul>
+            <h3>Colors</h3>
+            <ul>
+                <li>Yellow: c0be00</li>
+                <li>Orange: ff9705</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Camera settings</h2>
+            Yea, I didn't save them when I liked it so this is empty.
+        </section>
+        <section>
+            <h2>Navigation</h2>
+            <a href="/">Go home</a>
+        </section>
+    </div>
+{% endblock content %}

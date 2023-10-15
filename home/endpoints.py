@@ -15,6 +15,7 @@ valid_pages = [
         "name": "Travel information",
         "url": "/travel",
     },
+    {"name": "Camera settings", "url": "/camera"},
 ]
 
 
@@ -33,6 +34,17 @@ class TravelEndpoint(HTTPEndpoint):
 
         content = template.render(
             title="How I like to travel",
+        )
+
+        return HTMLResponse(content)
+
+
+class CameraEndpoint(HTTPEndpoint):
+    async def get(self, request):
+        template = ENVIRONMENT.get_template("camera.html.jinja")
+
+        content = template.render(
+            title="Photography related information",
         )
 
         return HTMLResponse(content)
