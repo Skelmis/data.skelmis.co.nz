@@ -6,6 +6,7 @@ from starlette.staticfiles import StaticFiles
 
 from home.endpoints import HomeEndpoint, TravelEndpoint, CameraEndpoint
 from home.piccolo_app import APP_CONFIG
+from middleware import CustomHeaderMiddleware
 
 app = FastAPI(
     title="Ethan's data aggregation",
@@ -26,6 +27,12 @@ app = FastAPI(
         ),
         Mount("/static/", StaticFiles(directory="static")),
     ],
+)
+app.add_middleware(
+    CustomHeaderMiddleware,
+    mappings={
+        "/authed/test": "TEST_KEY",
+    },
 )
 
 
