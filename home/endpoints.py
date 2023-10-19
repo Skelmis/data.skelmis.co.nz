@@ -85,7 +85,7 @@ class CameraEndpoint(HTTPEndpoint):
 
 class AchievementsEndpoint(HTTPEndpoint):
     @staticmethod
-    async def fetch_stats_for_package(package) -> str:
+    async def fetch_stats_for_package(package) -> tuple[str, int]:
         try:
             return cache.get_entry(package)
         except NonExistentEntry:
@@ -98,34 +98,37 @@ class AchievementsEndpoint(HTTPEndpoint):
                         f"Package {package} returned {response.status_code}"
                     )
 
-                value = str(response.json()["total_downloads"])
-                value = humanize.intcomma(value)
-                cache.add_entry(package, value, ttl=timedelta(hours=12))
-                return value
+                value = response.json()["total_downloads"]
+                humaized = humanize.intcomma(value)
+                cache.add_entry(package, (humaized, value), ttl=timedelta(hours=12))
+                return humaized, value
 
-    async def fetch_stats(self) -> list[tuple[str, str, str, str, str]]:
+    async def fetch_stats(self) -> tuple[list[tuple[str, str, str, str, str]], str]:
         data = []
+        total_count = 0
         for package in packages:
-            total = await self.fetch_stats_for_package(package["package_name"])
+            human_total, raw_total = await self.fetch_stats_for_package(
+                package["package_name"]
+            )
+            total_count += raw_total
             data.append(
                 (
                     package["package_name"],
                     package["description"],
-                    total,
+                    human_total,
                     package["url"],
                     f"https://www.pepy.tech/projects/{package['package_name']}",
                 )
             )
 
-        return data
+        return data, humanize.intcomma(total_count)
 
     async def get(self, request):
         template = ENVIRONMENT.get_template("achievements.jinja")
 
-        projects = await self.fetch_stats()
+        projects, total = await self.fetch_stats()
         content = template.render(
-            title="Things I like to show off",
-            projects=projects,
+            title="Things I like to show off", projects=projects, total=total
         )
 
         return HTMLResponse(content)
