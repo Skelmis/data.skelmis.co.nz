@@ -1,0 +1,39 @@
+{% extends "base.html.jinja" %}
+
+{% block content %}
+    <div class="hero">
+        <h1>{{ title }}</h1>
+    </div>
+    <div class="content">
+        <section>
+            <h2>CVE's</h2>
+            <ul>
+                <li>
+                    <a href="https://skelmis.co.nz/posts/cve-2023-41885/" target="_blank">CVE-2023-41885</a>:
+                    Piccolo time based user enumeration
+                </li>
+                <li>
+                    <a href="https://zxsecurity.co.nz/research/advisories/race-condition-asp-net-core-signinmanager/" target="_blank">
+                        CVE-2023-33170
+                    </a>: Security Feature Bypass In ASP.NET and Visual Studio – Race Condition
+                </li>
+            </ul>
+        </section>
+        <section>
+            <h2>Open source projects</h2>
+            <ul>
+                {% for project in projects %}
+                    <li>
+                        <a href="{{ project.3 }}">{{ project.0 }}</a><br>
+                        - Total downloads: <a href="{{ project.4 }}">{{ project.2 }}</a>
+                        <br>- {{ project.1 }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+        <section>
+            <h2>Navigation</h2>
+            <a href="/">Go home</a>
+        </section>
+    </div>
+{% endblock content %}

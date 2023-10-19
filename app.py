@@ -4,7 +4,12 @@ from piccolo.engine import engine_finder
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
-from home.endpoints import HomeEndpoint, TravelEndpoint, CameraEndpoint
+from home.endpoints import (
+    HomeEndpoint,
+    TravelEndpoint,
+    CameraEndpoint,
+    AchievementsEndpoint,
+)
 from home.piccolo_app import APP_CONFIG
 from middleware import CustomHeaderMiddleware
 
@@ -17,6 +22,7 @@ app = FastAPI(
         Route("/", HomeEndpoint),
         Route("/travel", TravelEndpoint),
         Route("/camera", CameraEndpoint),
+        Route("/achievements", AchievementsEndpoint),
         Mount(
             "/admin/",
             create_admin(

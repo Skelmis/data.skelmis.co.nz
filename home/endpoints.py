@@ -1,21 +1,54 @@
 import os
+from datetime import timedelta
 
+import httpx
+import humanize
 import jinja2
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import HTMLResponse
 
+from home.timed_cache import TimedCache, NonExistentEntry
 
 ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(
         searchpath=os.path.join(os.path.dirname(__file__), "templates")
     )
 )
+cache: TimedCache = TimedCache(lazy_eviction=False)
 valid_pages = [
     {
         "name": "Travel information",
         "url": "/travel",
     },
     {"name": "Camera settings", "url": "/camera"},
+    {"name": "Various achievements", "url": "/achievements"},
+]
+packages = [
+    {
+        "package_name": "discord-anti-spam",
+        "description": "A library agnostic Discord anti spam package.",
+        "url": "https://github.com/Skelmis/Discord-Anti-Spam",
+    },
+    {
+        "package_name": "bot-base",
+        "description": "A feature rich discord bot base to subclass and hit the ground running. Archived.",
+        "url": "https://github.com/Skelmis/Discord-Bot-Base",
+    },
+    {
+        "package_name": "function-cooldowns",
+        "description": "A simplistic decorator based approach to rate limiting function calls.",
+        "url": "https://github.com/Skelmis/Function-Cooldowns",
+    },
+    {
+        "package_name": "alaric",
+        "description": "A simplistic yet powerful asynchronous MongoDB query engine.",
+        "url": "https://github.com/Skelmis/Alaric",
+    },
+    {
+        "package_name": "zonis",
+        "description": "Agnostic IPC for Python programs.",
+        "url": "https://github.com/Skelmis/Zonis",
+    },
 ]
 
 
@@ -45,6 +78,54 @@ class CameraEndpoint(HTTPEndpoint):
 
         content = template.render(
             title="Photography related information",
+        )
+
+        return HTMLResponse(content)
+
+
+class AchievementsEndpoint(HTTPEndpoint):
+    @staticmethod
+    async def fetch_stats_for_package(package) -> str:
+        try:
+            return cache.get_entry(package)
+        except NonExistentEntry:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"https://api.pepy.tech/api/v2/projects/{package}",
+                )
+                if response.status_code != 200:
+                    raise ValueError(
+                        f"Package {package} returned {response.status_code}"
+                    )
+
+                value = str(response.json()["total_downloads"])
+                value = humanize.intcomma(value)
+                cache.add_entry(package, value, ttl=timedelta(hours=12))
+                return value
+
+    async def fetch_stats(self) -> list[tuple[str, str, str, str, str]]:
+        data = []
+        for package in packages:
+            total = await self.fetch_stats_for_package(package["package_name"])
+            data.append(
+                (
+                    package["package_name"],
+                    package["description"],
+                    total,
+                    package["url"],
+                    f"https://www.pepy.tech/projects/{package['package_name']}",
+                )
+            )
+
+        return data
+
+    async def get(self, request):
+        template = ENVIRONMENT.get_template("achievements.jinja")
+
+        projects = await self.fetch_stats()
+        content = template.render(
+            title="Things I like to show off",
+            projects=projects,
         )
 
         return HTMLResponse(content)
