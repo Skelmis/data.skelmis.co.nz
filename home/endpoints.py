@@ -1,3 +1,4 @@
+import logging
 import os
 from datetime import timedelta
 
@@ -9,6 +10,7 @@ from starlette.responses import HTMLResponse
 
 from home.timed_cache import TimedCache, NonExistentEntry
 
+log = logging.getLogger(__name__)
 ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(
         searchpath=os.path.join(os.path.dirname(__file__), "templates")
@@ -94,11 +96,10 @@ class AchievementsEndpoint(HTTPEndpoint):
                     f"https://api.pepy.tech/api/v2/projects/{package}",
                 )
                 if response.status_code != 200:
-                    raise ValueError(
-                        f"Package {package} returned {response.status_code}"
-                    )
-
-                value = response.json()["total_downloads"]
+                    log.warning(f"Package {package} returned {response.status_code}")
+                    value = -1
+                else:
+                    value = response.json()["total_downloads"]
                 humaized = humanize.intcomma(value)
                 cache.add_entry(package, (humaized, value), ttl=timedelta(hours=12))
                 return humaized, value
