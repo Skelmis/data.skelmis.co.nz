@@ -94,6 +94,7 @@ class AchievementsEndpoint(HTTPEndpoint):
             async with httpx.AsyncClient() as client:
                 response = await client.get(
                     f"https://api.pepy.tech/api/v2/projects/{package}",
+                    headers={"X-API-KEY": os.environ.get("PEPY_API_KEY", "")},
                 )
                 if response.status_code != 200:
                     log.warning(f"Package {package} returned {response.status_code}")
