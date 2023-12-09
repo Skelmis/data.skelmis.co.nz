@@ -231,9 +231,8 @@ async def post_burp(code: Annotated[str, Form()] = None):
         except black.parsing.InvalidInput:
             pass
 
-    except Exception as e:
+    except:
         result = "Something went wrong parsing your request"
-        raise
 
     template = ENVIRONMENT.get_template("burp.jinja")
     content = template.render(
