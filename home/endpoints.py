@@ -1,15 +1,21 @@
 import logging
 import os
+import textwrap
 from datetime import timedelta
+from string import Template
+from typing import Annotated, Any
 
+import black
 import httpx
 import humanize
 import jinja2
+from fastapi import Form, APIRouter
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import HTMLResponse
 
 from home.timed_cache import TimedCache, NonExistentEntry
 
+router = APIRouter()
 log = logging.getLogger(__name__)
 ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(
@@ -24,6 +30,7 @@ valid_pages = [
     },
     {"name": "Camera settings", "url": "/camera"},
     {"name": "Various achievements", "url": "/achievements"},
+    {"name": "Burp request to Python HTTPX", "url": "/burp"},
 ]
 packages = [
     {
@@ -134,3 +141,105 @@ class AchievementsEndpoint(HTTPEndpoint):
         )
 
         return HTMLResponse(content)
+
+
+@router.get("/burp")
+async def get_burp():
+    template = ENVIRONMENT.get_template("burp.jinja")
+
+    content = template.render(
+        title="Burp request to Python HTTPX",
+    )
+
+    return HTMLResponse(content)
+
+
+@router.post("/burp")
+async def post_burp(code: Annotated[str, Form()] = None):
+    httpx_code = textwrap.dedent(
+        """
+    import asyncio
+
+    import httpx
+    
+    
+    async def main():
+        async with httpx.AsyncClient() as client:
+            resp: httpx.Response = await client.$TYPE(
+                url="https://$URL",
+                headers=$HEADERS,
+                cookies=$COOKIES,
+                $EXTRA
+            )
+            print(resp.status_code)
+            print(resp.text)
+    
+    
+    if __name__ == "__main__":
+        asyncio.run(main())
+    """
+    )
+    string_template: Template = Template(httpx_code)
+
+    try:
+        # Handle input request
+        code = code.replace("\r\n", "\n")
+        headers, body = code.split("\n\n")
+        headers: list[str] = headers.split("\n")  # type: ignore
+        request_type, uri, _ = headers.pop(0).split(" ")
+        request_type: str = request_type.lower()
+        header_jar: dict[str, str] = {}
+        for line in headers:
+            k, v = line.split(": ", maxsplit=1)
+            header_jar[k] = v
+
+        cookies: list[tuple[str, str]] = []
+        raw_cookies = header_jar.pop("Cookie", "")
+        for cookie in raw_cookies.split(";"):
+            if "=" not in cookie:
+                continue
+            k, v = cookie.split("=", maxsplit=1)
+            cookies.append((k.strip(), v))
+
+        extra = ""
+        if request_type.lower() == "post":
+            is_json = "json" in header_jar.get("Content-Type", "")
+            if is_json:
+                extra = f'json="{body}"'
+            else:
+                fixed_body: dict[str, Any] = {}
+                for entry in body.split("&"):
+                    if "=" not in entry:
+                        continue
+                    k, v = entry.split("=", maxsplit=1)
+                    fixed_body[k] = v
+                extra = f"data={fixed_body}"
+
+        url = header_jar["Host"] + uri
+        result = string_template.substitute(
+            URL=url,
+            HEADERS=header_jar,
+            COOKIES=cookies,
+            TYPE=request_type.lower(),
+            EXTRA=extra,
+        )
+
+        mode = black.FileMode()
+        fast = False
+        try:
+            result = black.format_file_contents(result, fast=fast, mode=mode)
+        except black.parsing.InvalidInput:
+            pass
+
+    except Exception as e:
+        result = "Something went wrong parsing your request"
+        raise
+
+    template = ENVIRONMENT.get_template("burp.jinja")
+    content = template.render(
+        title="Burp request to Python HTTPX",
+        code=result,
+        raw_code=code,
+    )
+
+    return HTMLResponse(content)

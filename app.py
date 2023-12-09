@@ -4,6 +4,7 @@ from piccolo.engine import engine_finder
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
+from home import endpoints
 from home.endpoints import (
     HomeEndpoint,
     TravelEndpoint,
@@ -40,6 +41,7 @@ app.add_middleware(
         "/authed/test": "TEST_KEY",
     },
 )
+app.include_router(endpoints.router)
 
 
 @app.on_event("startup")
