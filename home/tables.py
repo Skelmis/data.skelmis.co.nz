@@ -17,3 +17,4 @@ class Jobs(Table):
     end_date: datetime.datetime = Date(required=False, null=True)
     job_title: str = Text(required=True)
     company: str = Text(required=True)
+    manager: str = Text(required=False, null=True)
