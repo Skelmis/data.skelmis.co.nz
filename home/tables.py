@@ -30,6 +30,6 @@ class Incidents(Table):
     date: int = BigInt()
     location: str = Text()
     duration: int = BigInt(null=True)
-    station: str = Text()
+    station: str = Text(required=True, index=True)
     result_code: str = Text(null=True)
     result_description: str = Text(null=True)

@@ -16,16 +16,19 @@ async def save_row(
     result_code: int,
     result_description: str,
 ):
-    # if result_code in (None, "") or result_description in (None, ""):
-    # This means the callout is still on going
-    # pass
-    if await Incidents.exists().where(Incidents.incident_number == incident_number):
+    if await Incidents.exists().where(
+        (Incidents.incident_number == incident_number) & (Incidents.station == station)
+    ):
+        # Callout exists, populate results as it may be finished now
         await Incidents.update(
             {
                 Incidents.result_code: result_code,
                 Incidents.result_description: result_description,
             }
-        ).where(Incidents.incident_number == incident_number)
+        ).where(
+            (Incidents.incident_number == incident_number)
+            & (Incidents.station == station)
+        )
     else:
         date = date.timestamp() if isinstance(date, datetime.datetime) else date
         duration = (
