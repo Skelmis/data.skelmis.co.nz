@@ -31,7 +31,8 @@ app = FastAPI(
             create_admin(
                 tables=APP_CONFIG.table_classes,
                 # Required when running under HTTPS:
-                # allowed_hosts=['my_site.com']
+                allowed_hosts=["data.skelmis.co.nz"],
+                production=True,
             ),
         ),
         Mount("/static/", StaticFiles(directory="static")),
