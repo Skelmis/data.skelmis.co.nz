@@ -1,3 +1,4 @@
+from commons import async_util
 from fastapi import FastAPI
 from piccolo_admin.endpoints import create_admin
 from piccolo.engine import engine_finder
@@ -11,6 +12,7 @@ from home.endpoints import (
     CameraEndpoint,
     AchievementsEndpoint,
 )
+from home.fenz.worker import digest_data
 from home.piccolo_app import APP_CONFIG
 from middleware import CustomHeaderMiddleware
 
@@ -42,6 +44,7 @@ app.add_middleware(
     },
 )
 app.include_router(endpoints.router)
+async_util.create_task(digest_data(), task_id="FENZ_WORKER")
 
 
 @app.on_event("startup")

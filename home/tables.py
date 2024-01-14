@@ -1,7 +1,7 @@
 import datetime
 
 from piccolo.table import Table
-from piccolo.columns import Text, Date
+from piccolo.columns import Text, Date, BigInt
 
 
 class Contact(Table):
@@ -23,3 +23,13 @@ class Jobs(Table):
 class Notes(Table):
     topic: str = Text()
     note: str = Text()
+
+
+class Incidents(Table):
+    incident_number: str = Text(unique=True, index=True, required=True)
+    date: int = BigInt()
+    location: str = Text()
+    duration: int = BigInt()
+    station: str = Text()
+    result_code: str = Text()
+    result_description: str = Text()

@@ -1,5 +1,6 @@
 import logging
 import os
+import secrets
 import textwrap
 from datetime import timedelta
 from string import Template
@@ -10,10 +11,14 @@ import httpx
 import humanize
 import jinja2
 from fastapi import Form, APIRouter
+from piccolo.utils.pydantic import create_pydantic_model
 from starlette.endpoints import HTTPEndpoint
-from starlette.responses import HTMLResponse
+from starlette.responses import HTMLResponse, Response
 
-from home.timed_cache import TimedCache, NonExistentEntry
+from commons.caching.timed_cache import TimedCache, NonExistentEntry
+
+from home import fenz
+from home.tables import Incidents
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -242,3 +247,16 @@ async def post_burp(code: Annotated[str, Form()] = None):
     )
 
     return HTMLResponse(content)
+
+
+IncidentModel = create_pydantic_model(Incidents)
+
+
+@router.post("/fenz/import/{access_key}", status_code=204)
+async def create_fenz_entry(entry: IncidentModel, access_key: str):
+    """Import an existing FENZ entry."""
+    if access_key != os.environ.get("FENZ_IMPORT_KEY", secrets.token_hex(32)):
+        return Response(status_code=401)
+
+    await fenz.save_row(**entry.dict())
+    return Response(status_code=204)
