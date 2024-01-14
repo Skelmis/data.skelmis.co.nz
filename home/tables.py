@@ -26,7 +26,7 @@ class Notes(Table):
 
 
 class Incidents(Table):
-    incident_number: str = Text(unique=True, index=True, required=True)
+    incident_number: str = Text(index=True, required=True)
     date: int = BigInt()
     location: str = Text()
     duration: int = BigInt(null=True)
