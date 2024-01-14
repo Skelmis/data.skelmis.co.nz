@@ -18,3 +18,8 @@ class Jobs(Table):
     job_title: str = Text(required=True)
     company: str = Text(required=True)
     manager: str = Text(required=False, null=True)
+
+
+class Notes(Table):
+    topic: str = Text()
+    note: str = Text()
