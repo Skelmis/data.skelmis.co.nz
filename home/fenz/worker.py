@@ -16,6 +16,11 @@ async def save_row(
     result_code: int,
     result_description: str,
 ):
+    duration = (
+        duration.total_seconds()
+        if isinstance(duration, datetime.timedelta)
+        else duration
+    )
     if await Incidents.exists().where(
         (Incidents.incident_number == incident_number) & (Incidents.station == station)
     ):
@@ -32,11 +37,6 @@ async def save_row(
         )
     else:
         date = date.timestamp() if isinstance(date, datetime.datetime) else date
-        duration = (
-            duration.total_seconds()
-            if isinstance(duration, datetime.timedelta)
-            else duration
-        )
 
         await Incidents.insert(
             Incidents(
