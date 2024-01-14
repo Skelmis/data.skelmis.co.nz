@@ -24,6 +24,7 @@ async def save_row(
             {
                 Incidents.result_code: result_code,
                 Incidents.result_description: result_description,
+                Incidents.duration: duration,
             }
         ).where(
             (Incidents.incident_number == incident_number)
