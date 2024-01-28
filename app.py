@@ -1,6 +1,6 @@
 from commons import async_util
 from fastapi import FastAPI
-from piccolo_admin.endpoints import create_admin
+from piccolo_admin.endpoints import create_admin, TableConfig
 from piccolo.engine import engine_finder
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
@@ -13,8 +13,17 @@ from home.endpoints import (
     AchievementsEndpoint,
 )
 from home.fenz.worker import digest_data
-from home.piccolo_app import APP_CONFIG
+from home.tables import Notes, Incidents, Contact, Jobs
 from middleware import CustomHeaderMiddleware
+
+notes_tc = TableConfig(
+    Notes,
+    exclude_visible_columns=[Notes.note],  # type: ignore
+    menu_group="General",
+)
+contact_tc = TableConfig(Contact, menu_group="General")
+jobs_tc = TableConfig(Jobs, menu_group="Work")
+incidents_tc = TableConfig(Incidents, menu_group="Fenz")
 
 app = FastAPI(
     title="Ethan's data aggregation",
@@ -29,10 +38,13 @@ app = FastAPI(
         Mount(
             "/admin/",
             create_admin(
-                tables=APP_CONFIG.table_classes,
+                tables=[contact_tc, notes_tc, jobs_tc, incidents_tc],
                 # Required when running under HTTPS:
                 allowed_hosts=["data.skelmis.co.nz"],
                 production=True,
+                sidebar_links={"Site root": "/"},
+                site_name="Data Admin",
+                auto_include_related=True,
             ),
         ),
         Mount("/static/", StaticFiles(directory="static")),
