@@ -11,6 +11,8 @@ import httpx
 import humanize
 import jinja2
 from fastapi import Form, APIRouter
+from piccolo.apps.user.tables import BaseUser
+from piccolo.columns import Or
 from piccolo.utils.pydantic import create_pydantic_model
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import HTMLResponse, Response
@@ -18,7 +20,7 @@ from starlette.responses import HTMLResponse, Response
 from commons.caching.timed_cache import TimedCache, NonExistentEntry
 
 from home import fenz
-from home.tables import Incidents
+from home.tables import Incidents, Contact
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -260,3 +262,42 @@ async def create_fenz_entry(entry: IncidentModel, access_key: str):
 
     await fenz.save_row(**entry.dict())
     return Response(status_code=204)
+
+
+@router.get("/im-dead", include_in_schema=False)
+async def im_dead(password: str = None):
+    if password is None:
+        return Response(status_code=404)
+
+    tyler_hash = os.environ.get("TYLER_HASH")
+    chris_hash = os.environ.get("CHRIS_HASH")
+
+    algorithm, iterations_, salt, hashed = BaseUser.split_stored_password(tyler_hash)
+    iterations = int(iterations_)
+    computed_hash_for_tyler = BaseUser.hash_password(password, salt, iterations)
+    algorithm, iterations_, salt, hashed = BaseUser.split_stored_password(tyler_hash)
+    iterations = int(iterations_)
+    computed_hash_for_chris = BaseUser.hash_password(password, salt, iterations)
+    if computed_hash_for_tyler != tyler_hash and computed_hash_for_chris != chris_hash:
+        return Response(status_code=401)
+
+    # It's one of the two by now
+    name = "Tyler" if tyler_hash == computed_hash_for_tyler else "Chris"
+    people = await Contact.select().where(
+        Or(
+            Contact.name == "Tyler Evans",
+            Or(
+                Contact.name == "Chris Penno",
+                Or(
+                    Contact.name == "Jacob Harris",
+                    Contact.name == "Patrick Harris",
+                ),
+            ),
+        )
+    )
+    people = list(sorted(people, key=lambda p: p["name"]))
+
+    template = ENVIRONMENT.get_template("dead.jinja")
+    content = template.render(title=f"👋 {name}", people=people)
+
+    return HTMLResponse(content)

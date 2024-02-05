@@ -1,0 +1,43 @@
+{% extends "base.html.jinja" %}
+
+{% block content %}
+    <div class="hero">
+        <h1>{{ title }}</h1>
+    </div>
+    <div class="content">
+        <section>
+            I spose if your reading this I am probably dead. That sucks. Yikes.
+            <br><br>
+            Yeaaa, don't really know what to say.
+        </section>
+        <section>
+            <h2>Here's some information you'll need</h2>
+            <h3>Will location:</h3>
+            As of time of writing (Feb 2024), my will has been filed with these folks: <a
+                href="https://sievwrights.co.nz/" target="_blank">https://sievwrights.co.nz/</a>
+
+            <hr>
+            <h3>Details of people mentioned in the will:</h3>
+            Note this is all the info I stored for these users internally on this site.
+            Don't be disappointed by my personal notes lol.
+            {% for person in people %}
+                <ul>
+                    <li><b>{{ person.name }}</b></li>
+                    <li>Phone: {{ person.phone_number }}</li>
+                    <li>Email: {{ person.email_address }}</li>
+                    <li>Home Address: {{ person.home_address }}</li>
+                    <li>Notes: {{ person.notes }}</li>
+                    <li>Full name: {{ person.full_name }}</li>
+                    <li>Other notes: {{ person.hidden_notes }}</li>
+                </ul>
+            {% endfor %}
+            <hr>
+            Good luck with the will, I'd say lmk if you have any questions but ah well :P
+        </section>
+        <section>
+            <h2>Navigation</h2>
+            <a href="/">Go home</a>
+        </section>
+        I'm not dead? Well this page does generate access logs.
+    </div>
+{% endblock %}
