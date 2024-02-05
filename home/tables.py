@@ -10,6 +10,8 @@ class Contact(Table):
     email_address: str = Text(required=False)
     home_address: str = Text(required=False)
     notes: str = Text(required=False)
+    full_name: str = Text(required=False)
+    hidden_notes: str = Text(required=False)
 
 
 class Jobs(Table):

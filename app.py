@@ -21,7 +21,11 @@ notes_tc = TableConfig(
     exclude_visible_columns=[Notes.note],  # type: ignore
     menu_group="General",
 )
-contact_tc = TableConfig(Contact, menu_group="General")
+contact_tc = TableConfig(
+    Contact,
+    menu_group="General",
+    exclude_visible_columns=[Contact.full_name, Contact.hidden_notes],  # type: ignore
+)
 jobs_tc = TableConfig(Jobs, menu_group="Work")
 incidents_tc = TableConfig(Incidents, menu_group="Fenz")
 
