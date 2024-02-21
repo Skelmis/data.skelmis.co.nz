@@ -275,7 +275,7 @@ async def im_dead(password: str = None):
     algorithm, iterations_, salt, hashed = BaseUser.split_stored_password(tyler_hash)
     iterations = int(iterations_)
     computed_hash_for_tyler = BaseUser.hash_password(password, salt, iterations)
-    algorithm, iterations_, salt, hashed = BaseUser.split_stored_password(tyler_hash)
+    algorithm, iterations_, salt, hashed = BaseUser.split_stored_password(chris_hash)
     iterations = int(iterations_)
     computed_hash_for_chris = BaseUser.hash_password(password, salt, iterations)
     if computed_hash_for_tyler != tyler_hash and computed_hash_for_chris != chris_hash:
