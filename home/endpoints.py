@@ -20,7 +20,7 @@ from starlette.responses import HTMLResponse, Response
 from commons.caching.timed_cache import TimedCache, NonExistentEntry
 
 from home import fenz
-from home.tables import Incidents, Contact
+from home.tables import Incidents, Contact, F1Fantasy
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -38,6 +38,7 @@ valid_pages = [
     {"name": "Camera settings", "url": "/camera"},
     {"name": "Various achievements", "url": "/achievements"},
     {"name": "Burp request to Python HTTPX", "url": "/burp"},
+    {"name": "F1 Fantasy 2024 teams", "url": "/f1/24"},
 ]
 packages = [
     {
@@ -264,6 +265,7 @@ async def create_fenz_entry(entry: IncidentModel, access_key: str):
     return Response(status_code=204)
 
 
+# noinspection PyTypeChecker
 @router.get("/im-dead", include_in_schema=False)
 async def im_dead(password: str = None):
     if password is None:
@@ -299,5 +301,18 @@ async def im_dead(password: str = None):
 
     template = ENVIRONMENT.get_template("dead.jinja")
     content = template.render(title=f"👋 {name}", people=people)
+
+    return HTMLResponse(content)
+
+
+# noinspection PyTypeChecker
+@router.get("/f1/{year}")
+async def show_f1_teams(year: str):
+    possible_teams = await F1Fantasy.select().where(F1Fantasy.year == year)
+    template = ENVIRONMENT.get_template("f1.jinja")
+    content = template.render(
+        title=f"F1 teams to people for the year 20{year}",
+        teams=list(sorted(possible_teams, key=lambda t: t["team_name"])),
+    )
 
     return HTMLResponse(content)

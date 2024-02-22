@@ -1,7 +1,8 @@
 import datetime
+from enum import Enum
 
 from piccolo.table import Table
-from piccolo.columns import Text, Date, BigInt
+from piccolo.columns import Text, Date, BigInt, Varchar
 
 
 class Contact(Table):
@@ -35,3 +36,19 @@ class Incidents(Table):
     station: str = Text(required=True, index=True)
     result_code: str = Text(null=True)
     result_description: str = Text(null=True)
+
+
+class F1FantasyPlayers(str, Enum):
+    ETHAN = "Ethan"
+    CHRIS = "Chris"
+    CAMPBELL = "Campbell"
+    TYLER = "Tyler"
+    OLIVIA = "Olivia"
+    JACK = "Jack"
+    BRYN = "Bryn"
+
+
+class F1Fantasy(Table):
+    year: str = Varchar(length=2)
+    team_name: str = Text()
+    person: str = Text(choices=F1FantasyPlayers)
