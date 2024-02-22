@@ -13,7 +13,7 @@ from home.endpoints import (
     AchievementsEndpoint,
 )
 from home.fenz.worker import digest_data
-from home.tables import Notes, Incidents, Contact, Jobs, F1Fantasy
+from home.tables import Notes, Incidents, Contact, Jobs
 from middleware import CustomHeaderMiddleware
 
 notes_tc = TableConfig(
@@ -28,7 +28,6 @@ contact_tc = TableConfig(
 )
 jobs_tc = TableConfig(Jobs, menu_group="Work")
 incidents_tc = TableConfig(Incidents, menu_group="Fenz")
-f1_fantasy_tc = TableConfig(F1Fantasy, menu_group="General")
 
 app = FastAPI(
     title="Ethan's data aggregation",
@@ -43,7 +42,7 @@ app = FastAPI(
         Mount(
             "/admin/",
             create_admin(
-                tables=[contact_tc, notes_tc, jobs_tc, incidents_tc, f1_fantasy_tc],
+                tables=[contact_tc, notes_tc, jobs_tc, incidents_tc],
                 # Required when running under HTTPS:
                 allowed_hosts=["data.skelmis.co.nz"],
                 production=True,
