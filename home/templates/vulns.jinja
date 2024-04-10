@@ -1,0 +1,62 @@
+{% extends "base.html.jinja" %}
+
+{% block content %}
+    <div class="hero">
+        <h1>{{ title }}</h1>
+    </div>
+    <div class="content">
+        <section>
+            Hi!<br>
+            So you've found a security issue in one of my products? That's great!<br><br>
+
+            If this product is hosted on GitHub, please report a vulnerability
+            via the security reporting functionality on the repository. If that is
+            not possible, please continue through this guide and note this
+            in your email, so I can remediate it.
+            <br><br>
+
+            My expectations:
+            <ol>
+                <li>You are not actively abusing this issue.</li>
+                <li>You will wait to publish any details until I have had the opportunity to remediate issues.</li>
+                <li>You will act in good faith.</li>
+                <li>You will avoid any activities that disrupt, degrade or interupt my services or may compromise other user data. This includes things such as spam, brute forcing, DoS, etc.</li>
+            </ol>
+
+            <br><br>
+            If you believe you have found an issue, email it to <b>security at skelmis.co.nz</b><br>
+            At minimum, your email should contain the following:
+            <ul>
+                <li>Affected service, and version if applicable</li>
+                <li>Vulnerability description</li>
+                <li>Reproduction steps. Without a valid exploitation context, I likely won't pursue reports</li>
+            </ul>
+            <br>
+            Upon receiving a report, I will:
+            <ul>
+                <li>Act in good faith for all reports</li>
+                <li>Aim to acknowledge any findings and keep you informed of any developments</li>
+                <li>Aim to resolve confirm vulnerabilities within a reasonable period of time. The goal will be 90 days
+            from confirmation, however this will vary by report</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Scope</h2>
+            This disclosure process applies to the following things.
+            <ul>
+                <li>*.skelmis.co.nz, skelmis.co.nz</li>
+                <li>*.darkhaven.co.nz, darkhaven.co.nz</li>
+                <li>*.koldfusion.xyz, koldfusion.xyz</li>
+                <li>Any of my GitHub repos: <a href="https://github.com/skelmis">Found here</a></li>
+            </ul>
+            Note also that certain vulnerabilities are out of scope. This is things  such as un-exploitable out of date JavaScript libraries.
+            <br><br>
+            Further, this page primarily exists for if you accidentally find something.
+            I would prefer if you didn't actively attempt to exploit my digital presence.
+        </section>
+        <section>
+            <h2>Navigation</h2>
+            <a href="/">Go home</a>
+        </section>
+    </div>
+{% endblock content %}

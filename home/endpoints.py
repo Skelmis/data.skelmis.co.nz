@@ -308,3 +308,23 @@ async def im_dead(password: str = None):
     content = template.render(title=f"👋 {name}", people=people)
 
     return HTMLResponse(content)
+
+
+@router.get("/.well-known/security.txt", include_in_schema=False)
+async def security_stuff():
+    content = """
+    Contact: mailto:security@skelmis.co.nz
+    Expires: 2024-12-31T12:00:00.000Z
+    Preferred-Languages: en
+    Canonical: https://data.skelmis.co.nz/.well-known/security.txt
+    Policy: https://data.skelmis.co.nz/disclosure-policy
+    """
+    return Response(content)
+
+
+@router.get("/disclosure-policy", include_in_schema=False)
+async def disclosure_policy():
+    template = ENVIRONMENT.get_template("vulns.jinja")
+    content = template.render(title=f"Vulnerability disclosure process")
+
+    return HTMLResponse(content)
