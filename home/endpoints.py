@@ -66,6 +66,11 @@ packages = [
         "description": "Agnostic IPC for Python programs.",
         "url": "https://github.com/Skelmis/Zonis",
     },
+    {
+        "package_name": "logoo",
+        "description": "A Python package for easy openobserve log ingestion.",
+        "url": "https://github.com/Skelmis/logoo",
+    },
 ]
 
 
