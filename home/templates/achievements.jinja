@@ -8,36 +8,11 @@
         <section>
             <h2>CVE's I am attributed on</h2>
             <ul>
-                <li>
-                    <a href="https://github.com/firefly-iii/firefly-iii/security/advisories/GHSA-4gm4-c4mh-4p7w">CVE-2024-37893</a>:
-                    MFA bypass in OAuth flow may lead to compromise of Firefly III data
-                </li>
-                <li>
-                    <a href="https://github.com/zitadel/zitadel/security/advisories/GHSA-7j7j-66cv-m239" target="_blank">CVE-2024-32868</a>:
-                    Improper lockout mechanisms may lead to bypass in Zitadel
-                </li>
-                <li>
-                    <a href="https://github.com/piccolo-orm/piccolo_admin/security/advisories/GHSA-pmww-v6c9-7p83" target="_blank">CVE-2024-30248</a>:
-                    Raw SVG loading may lead to complete data compromise from Piccolo admin page
-                </li>
-                <li>
-
-                    <a href="https://github.com/piccolo-orm/piccolo/security/advisories/GHSA-xq59-7jf3-rjc6" target="_blank">CVE-2023-47128</a>:
-                    SQL Injection via named transaction savepoints in Piccolo
-                </li>
-                <li>
-                    <a href="https://zxsecurity.co.nz/research/advisories/zitadel-account-takeover/" target="_blank">CVE-2023-46238</a>:
-                    Stored XSS leading to a one click silent account takeover in Zitadel
-                </li>
-                <li>
-                    <a href="https://skelmis.co.nz/posts/cve-2023-41885/" target="_blank">CVE-2023-41885</a>:
-                    Piccolo time based user enumeration
-                </li>
-                <li>
-                    <a href="https://zxsecurity.co.nz/research/advisories/race-condition-asp-net-core-signinmanager/" target="_blank">
-                        CVE-2023-33170</a>:
-                    Security Feature Bypass In ASP.NET and Visual Studio – Race Condition
-                </li>
+                {% for cve in cves %}
+                	<li>
+                    <a href="{{ cve.link }}" target="_blank">{{ cve.link_text }}</a>: {{ cve.description }}
+                    </li>
+                {% endfor %}
             </ul>
         </section>
         <section>
@@ -51,7 +26,7 @@
         </section>
         <section>
             <h2>My open source projects</h2>
-            A short list of my more popular open source projects.<br><br>
+            A short list of my more popular / useful open source projects.<br><br>
             Total downloads for all packages listed below: {{ total }}
             <ul>
                 {% for project in projects %}

@@ -71,6 +71,48 @@ packages = [
         "description": "A Python package for easy openobserve log ingestion.",
         "url": "https://github.com/Skelmis/logoo",
     },
+    {
+        "package_name": "idox",
+        "description": "A CLI or embedded tool for easily downloading IDOR'd files from a burp request or raw url.",
+        "url": "https://github.com/Skelmis/idox",
+    },
+]
+cves = [
+    {
+        "link": "https://skelmis.co.nz/posts/cve-2024-37893/",
+        "link_text": "CVE-2024-37893",
+        "description": "MFA bypass in OAuth flow may lead to compromise of Firefly III data",
+    },
+    {
+        "link": "https://github.com/zitadel/zitadel/security/advisories/GHSA-7j7j-66cv-m239",
+        "link_text": "CVE-2024-32868",
+        "description": "Improper lockout mechanisms may lead to bypass in Zitadel",
+    },
+    {
+        "link": "https://github.com/piccolo-orm/piccolo_admin/security/advisories/GHSA-pmww-v6c9-7p83",
+        "link_text": "CVE-2024-30248",
+        "description": "Raw SVG loading may lead to complete data compromise from Piccolo admin page",
+    },
+    {
+        "link": "https://github.com/piccolo-orm/piccolo/security/advisories/GHSA-xq59-7jf3-rjc6",
+        "link_text": "CVE-2023-47128",
+        "description": "SQL Injection via named transaction savepoints in Piccolo",
+    },
+    {
+        "link": "https://zxsecurity.co.nz/research/advisories/zitadel-account-takeover/",
+        "link_text": "CVE-2023-46238",
+        "description": "Stored XSS leading to a one click silent account takeover in Zitadel",
+    },
+    {
+        "link": "https://skelmis.co.nz/posts/cve-2023-41885/",
+        "link_text": "CVE-2023-41885",
+        "description": "Piccolo time based user enumeration",
+    },
+    {
+        "link": "https://zxsecurity.co.nz/research/advisories/race-condition-asp-net-core-signinmanager/",
+        "link_text": "CVE-2023-33170",
+        "description": "Security Feature Bypass In ASP.NET and Visual Studio – Race Condition",
+    },
 ]
 
 
@@ -150,7 +192,7 @@ class AchievementsEndpoint(HTTPEndpoint):
 
         projects, total = await self.fetch_stats()
         content = template.render(
-            title="Things I like to show off", projects=projects, total=total
+            title="Things I like to show off", projects=projects, total=total, cves=cves
         )
 
         return HTMLResponse(content)
